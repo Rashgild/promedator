@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    active: default
+
+lpu:
+  id: "123456789"
+
+cron:
+  schedule: "* 12 12 * * *"
