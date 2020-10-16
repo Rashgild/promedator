@@ -1,6 +1,5 @@
 package ru.rashgild.promedator.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -12,7 +11,6 @@ import ru.rashgild.promedator.data.dto.promed.PersonDto
 import ru.rashgild.promedator.data.dto.promed.TimeTableDto
 import ru.rashgild.promedator.extentions.mapToList
 import ru.rashgild.promedator.extentions.validate
-import java.time.LocalDate
 
 @Service
 class ScheduleServiceImpl(
@@ -36,8 +34,6 @@ class ScheduleServiceImpl(
 
     override fun synchronize(date: String) {
         val listDates = getDateList(date)
-
-        val m = System.currentTimeMillis()
         listDates
             .parallelStream()
             .forEach { dateTableDto: DateTableDto? ->
@@ -50,7 +46,6 @@ class ScheduleServiceImpl(
                     }
                 }
             }
-        println(System.currentTimeMillis() - m)
     }
 
     private fun createMedosModel(person: PersonDto, timeTable: TimeTableDto): ScheduleEntryDto {
