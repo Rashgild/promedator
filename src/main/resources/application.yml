@@ -1,9 +1,14 @@
 spring:
   profiles:
     active: default
-
-lpu:
-  id: "123456789"
-
+promed:
+  url: "https://localhost:1234/"
+  login: "test_login"
+  password: "test_password"
+  lpu:
+    id: "12345678"
+medos:
+  url: "http://localhost:8090/"
+  token: "test-token"
 cron:
   schedule: "* 12 12 * * *"
