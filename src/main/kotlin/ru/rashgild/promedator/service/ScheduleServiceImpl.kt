@@ -9,7 +9,7 @@ import ru.rashgild.promedator.data.dto.medsys.ScheduleEntryDto
 import ru.rashgild.promedator.data.dto.promed.DateTableDto
 import ru.rashgild.promedator.data.dto.promed.PersonDto
 import ru.rashgild.promedator.data.dto.promed.TimeTableDto
-import ru.rashgild.promedator.extentions.mapToList
+import ru.rashgild.promedator.extentions.promedDtoToList
 import ru.rashgild.promedator.extentions.validate
 
 @Service
@@ -23,13 +23,13 @@ class ScheduleServiceImpl(
     override fun getDateList(date: String): List<DateTableDto> {
         return promedClient.getDate(date)
             .validate()
-            .mapToList(DateTableDto::class.java)
+            .promedDtoToList(DateTableDto::class.java)
     }
 
     override fun getTimeByDate(dateId: Long?): List<TimeTableDto> {
         return promedClient.getTimeByDateId(dateId!!)
             .validate()
-            .mapToList(TimeTableDto::class.java)
+            .promedDtoToList(TimeTableDto::class.java)
     }
 
     override fun synchronize(date: String) {

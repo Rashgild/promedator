@@ -67,4 +67,19 @@ open class PromedClient(
             headers = authService.getHeader()
         )
     }
+
+    fun sendMedicalCase() {
+        /*        return baseRequest(promedEvn)
+                .post(ClientResponse.class, evn);*/
+    }
+
+    fun sendMedicalVisit() {
+        /*        return baseRequest(promedVisit)
+                .post(ClientResponse.class, evnVisit);*/
+    }
+
+    fun sendDiary() {
+        /*        return baseRequest(promedDiary)
+                .post(ClientResponse.class, evnXmlDiary);*/
+    }
 }

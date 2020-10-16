@@ -25,7 +25,7 @@ fun <T> Response.map(targetClass: Class<T>?): T {
     return objectMapper.map(this.text, targetClass)
 }
 
-fun <T> Response.mapToList(targetClass: Class<T>?): List<T> {
+fun <T> Response.promedDtoToList(targetClass: Class<T>?): List<T> {
     return objectMapper.mapToList(
         map(ResponseDataDto::class.java).data,
         targetClass
