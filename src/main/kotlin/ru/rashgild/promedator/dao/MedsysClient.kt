@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import khttp.responses.Response
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import ru.rashgild.promedator.data.dto.medos.ScheduleEntryDto
+import ru.rashgild.promedator.data.dto.medsys.ScheduleEntryDto
 
 @Component
-open class MedosClient(
+open class MedsysClient(
     private val objectMapper: ObjectMapper,
-    @Value("\${medos.url}") private val url: String,
+    @Value("\${medsys.url}") private val url: String,
 ) : AbstractWebClient() {
 
     companion object {

@@ -7,7 +7,7 @@ promed:
   password: "test_password"
   lpu:
     id: "12345678"
-medos:
+medsys:
   url: "http://localhost:8090/"
   token: "test-token"
 cron:

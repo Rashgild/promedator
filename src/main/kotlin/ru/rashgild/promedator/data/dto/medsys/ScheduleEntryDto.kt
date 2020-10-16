@@ -1,4 +1,4 @@
-package ru.rashgild.promedator.data.dto.medos
+package ru.rashgild.promedator.data.dto.medsys
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties

@@ -3,9 +3,9 @@ package ru.rashgild.promedator.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import ru.rashgild.promedator.dao.MedosClient
+import ru.rashgild.promedator.dao.MedsysClient
 import ru.rashgild.promedator.dao.PromedClient
-import ru.rashgild.promedator.data.dto.medos.ScheduleEntryDto
+import ru.rashgild.promedator.data.dto.medsys.ScheduleEntryDto
 import ru.rashgild.promedator.data.dto.promed.DateTableDto
 import ru.rashgild.promedator.data.dto.promed.PersonDto
 import ru.rashgild.promedator.data.dto.promed.TimeTableDto
@@ -14,9 +14,9 @@ import ru.rashgild.promedator.extentions.validate
 
 @Service
 class ScheduleServiceImpl(
-    @Value("\$medos.token") private val medosToken: String,
+    @Value("\$medsys.token") private val medsysToken: String,
     @Autowired private val promedClient: PromedClient,
-    @Autowired private val medosClient: MedosClient,
+    @Autowired private val medsysClient: MedsysClient,
     @Autowired private val personService: PersonService
 ) : ScheduleService {
 
@@ -41,14 +41,14 @@ class ScheduleServiceImpl(
                 if (person != null) {
                     val listTimes = getTimeByDate(dateTableDto?.timeTableGrafId)
                     listTimes.forEach { timeTableDto ->
-                        val entry: ScheduleEntryDto = createMedosModel(person, timeTableDto)
-                        medosClient.saveRecord(entry)
+                        val entry: ScheduleEntryDto = createMedsysModel(person, timeTableDto)
+                        medsysClient.saveRecord(entry)
                     }
                 }
             }
     }
 
-    private fun createMedosModel(person: PersonDto, timeTable: TimeTableDto): ScheduleEntryDto {
+    private fun createMedsysModel(person: PersonDto, timeTable: TimeTableDto): ScheduleEntryDto {
         return ScheduleEntryDto(
             lastName = person.surName,
             firstName = person.firstName,
@@ -60,7 +60,7 @@ class ScheduleServiceImpl(
             doctorPromedId = timeTable.medStaffFactId,
             reserveCode = "PROMED",
             recordType = "PROMED",
-            token = medosToken
+            token = medsysToken
         )
     }
 }
