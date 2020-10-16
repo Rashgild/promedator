@@ -10,14 +10,15 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class TimeTableDto (
+class TimeTableDto(
 
     @JsonProperty("MedStaffFact_id")
-    private val medStaffFactId: Long? = null,
+    val medStaffFactId: Long? = null,
 
     @JsonProperty("TimeTableGraf_begTime")
     @JsonSerialize(using = LocalDateTimeSerializer::class)
     @JsonDeserialize(using = LocalDateTimeDeserializer::class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private val dateTime: LocalDateTime? = null
+    val dateTime: LocalDateTime? = null
 )
+
