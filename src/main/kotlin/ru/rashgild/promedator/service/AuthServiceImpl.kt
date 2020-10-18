@@ -3,11 +3,11 @@ package ru.rashgild.promedator.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Service
+import ru.rashgild.promedator.dao.BaseWebClient.Companion.map
 import ru.rashgild.promedator.dao.PromedClient
+import ru.rashgild.promedator.dao.PromedClient.Companion.validate
 import ru.rashgild.promedator.data.dto.promed.TokenResponseDto
 import ru.rashgild.promedator.data.enity.Token
-import ru.rashgild.promedator.extentions.map
-import ru.rashgild.promedator.extentions.validate
 
 @Service
 @Scope("singleton")

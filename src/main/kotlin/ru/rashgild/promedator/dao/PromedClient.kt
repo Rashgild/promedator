@@ -2,15 +2,17 @@ package ru.rashgild.promedator.dao
 
 import khttp.responses.Response
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
+import ru.rashgild.promedator.data.dto.promed.ResponseErrorDto
+import ru.rashgild.promedator.exception.BadRequestWebException
 
-@Component
+@Service
 open class PromedClient(
     @Value("\${promed.url}") private val url: String,
     @Value("\${promed.login}") private val login: String,
     @Value("\${promed.password}") private val password: String,
     @Value("\${promed.lpu.id}") private val lpuId: String
-) : AbstractWebClient() {
+) : BaseWebClient() {
 
     companion object {
         private const val PERSON_ENDPOINT = "api/Person"
@@ -18,6 +20,19 @@ open class PromedClient(
         private const val TIME_TABLE_ENDPOINT = "api/TimeTableGraf/TimeTableGrafById"
         private const val LOGIN_ENDPOINT = "api/user/login"
         private const val LOGOUT_ENDPOINT = "api/user/logout"
+
+        fun Response.validate(): Response {
+            if (this.statusCode == 200) {
+                val error = this.map(ResponseErrorDto::class.java)
+                if (!error.message.isNullOrEmpty()) {
+                    throw BadRequestWebException("error: \"${error.message}\"")
+                } else {
+                    return this
+                }
+            } else {
+                throw BadRequestWebException("error: \"${this.statusCode}\"")
+            }
+        }
     }
 
     fun auth(): Response {

@@ -3,14 +3,14 @@ package ru.rashgild.promedator.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import ru.rashgild.promedator.dao.BaseWebClient.Companion.mapToList
 import ru.rashgild.promedator.dao.MedsysClient
 import ru.rashgild.promedator.dao.PromedClient
+import ru.rashgild.promedator.dao.PromedClient.Companion.validate
 import ru.rashgild.promedator.data.dto.medsys.ScheduleEntryDto
 import ru.rashgild.promedator.data.dto.promed.DateTableDto
 import ru.rashgild.promedator.data.dto.promed.PersonDto
 import ru.rashgild.promedator.data.dto.promed.TimeTableDto
-import ru.rashgild.promedator.extentions.promedDtoToList
-import ru.rashgild.promedator.extentions.validate
 
 @Service
 class ScheduleServiceImpl(
@@ -23,13 +23,13 @@ class ScheduleServiceImpl(
     override fun getDateList(date: String): List<DateTableDto> {
         return promedClient.getDate(date)
             .validate()
-            .promedDtoToList(DateTableDto::class.java)
+            .mapToList(DateTableDto::class.java)
     }
 
     override fun getTimeByDate(dateId: Long?): List<TimeTableDto> {
         return promedClient.getTimeByDateId(dateId!!)
             .validate()
-            .promedDtoToList(TimeTableDto::class.java)
+            .mapToList(TimeTableDto::class.java)
     }
 
     override fun synchronize(date: String) {
