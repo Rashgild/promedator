@@ -10,32 +10,32 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
 import java.time.LocalDate
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class PersonDto(
+data class MedStaff(
+    private var id: Int? = null,
 
-    @JsonProperty("Person_id")
-    val personId: Long,
+    private val medStaffId: Int? = null,
 
-    @JsonProperty("PersonSurName_SurName")
-    val surName: String? = null,
+    @JsonProperty("MedPersonal_id")
+    private val medPersonalId: Int? = null,
 
-    @JsonProperty("PersonFirName_FirName")
-    val firstName: String? = null,
+    @JsonProperty("Staff_id")
+    private val staffId: Int? = null,
 
-    @JsonProperty("PersonSecName_SecName")
-    val secName: String? = null,
-
-    @JsonProperty("PersonBirthDay_BirthDay")
+    @JsonProperty("BeginDate")
     @JsonSerialize(using = LocalDateSerializer::class)
     @JsonDeserialize(using = LocalDateDeserializer::class)
     @JsonFormat(pattern = "yyyy-MM-dd")
-    val birthday: LocalDate? = null,
+    private val beginDate: LocalDate? = null,
 
-    @JsonProperty("Person_Sex_id")
-    val sexId: Long? = null,
+    @JsonProperty("EndDate")
+    @JsonSerialize(using = LocalDateSerializer::class)
+    @JsonDeserialize(using = LocalDateDeserializer::class)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private val endDate: LocalDate? = null,
 
-    @JsonProperty("PersonPhone_Phone")
-    val phone: String? = null,
+    @JsonProperty("LpuSection_id")
+    private val lpuSectionId: Int? = null,
 
-    @JsonProperty("PersonSnils_Snils")
-    val snils: String? = null
+    @JsonProperty("Lpu_id")
+    private val lpuId: Int? = null,
 )

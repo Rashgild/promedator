@@ -3,15 +3,16 @@ package ru.rashgild.promedator.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import ru.rashgild.promedator.dao.BaseWebClient.Companion.mapToList
+import ru.rashgild.promedator.dao.BaseWebClient.Companion.validate
 import ru.rashgild.promedator.dao.MedsysClient
-import ru.rashgild.promedator.data.dto.BaseResponseDto
+import ru.rashgild.promedator.data.dto.medsys.MedicalCaseDto
 
 @Service
 class AmbulatoryEpicrisisServiceImpl(
-    @Autowired private val medsysClient: MedsysClient
+    @Autowired private val medicalCaseService: MedicalCaseService
 ) : AmbulatoryEpicrisisService {
 
     override fun sync(date: String) {
-        medsysClient.getMedicalCase(date).mapToList(BaseResponseDto::class.java)
+        val taps = medicalCaseService.getMedicalCase(date)
     }
 }

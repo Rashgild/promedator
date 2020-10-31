@@ -15,7 +15,7 @@ data class VisitDto(
     val medStaffId: Long? = null,
 
     @JsonProperty("MedosId")
-    val medsysId: Int? = null,
+    val medsysId: Long,
 
     @JsonProperty("ServiceType_id")
     val serviceTypeId: Int? = null,
@@ -57,5 +57,5 @@ data class VisitDto(
     val firstVisit: Boolean? = null,
 
     @JsonProperty("WorkStaffInfo")
-    val workStaff: WorkStaffDto? = null
+    val workStaff: WorkStaffDto
 )

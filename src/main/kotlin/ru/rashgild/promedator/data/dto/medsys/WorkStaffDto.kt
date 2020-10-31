@@ -18,8 +18,13 @@ data class WorkStaffDto(
     val middleName: String? = null,
 
     @JsonProperty("doctorSnils")
-    val snils: String? = null,
+    val snils: String,
 
     @JsonProperty("promedCode_workstaff")
     val workStaffId: Int? = null,
-)
+
+    ) {
+    fun getFio(): String {
+        return lastName + firstName + middleName
+    }
+}

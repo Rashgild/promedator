@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class MedicalCaseDto (
 
     @JsonProperty("patient")
-    val patient: PatientDto? = null,
+    val patient: PatientDto,
 
     @JsonProperty("EvnPL_NumCard")
     val numCard: Int? = null,

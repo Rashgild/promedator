@@ -1,4 +1,4 @@
-package ru.rashgild.promedator.data.dto.medsys
+package ru.rashgild.promedator.data.dto.promed
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -10,23 +10,26 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
 import java.time.LocalDate
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class PatientDto(
+data class WorkPlaceDto(
 
-    @JsonProperty("lastname")
-    val lastName: String,
+    @JsonProperty("MedWorker_id")
+    var medWorkerId: Long,
 
-    @JsonProperty("firstname")
-    val firstName: String,
+    @JsonProperty("Lpu_id")
+    val lpuId: Long,
 
-    @JsonProperty("middlename")
-    val middleName: String? = null,
+    @JsonProperty("LpuSection_id")
+    val lpuSectionId: Long,
 
     @JsonSerialize(using = LocalDateSerializer::class)
     @JsonDeserialize(using = LocalDateDeserializer::class)
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @JsonProperty("birthday")
-    var birthday: LocalDate,
+    @JsonProperty("beginDate")
+    val beginDate: LocalDate,
 
-    @JsonProperty("snils")
-    val snils: String
+    @JsonSerialize(using = LocalDateSerializer::class)
+    @JsonDeserialize(using = LocalDateDeserializer::class)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonProperty("endDate")
+    val endDate: LocalDate? = null
 )
