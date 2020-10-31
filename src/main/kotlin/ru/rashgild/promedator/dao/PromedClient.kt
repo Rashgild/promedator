@@ -4,6 +4,9 @@ import khttp.responses.Response
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import ru.rashgild.promedator.data.dto.medsys.PatientDto
+import ru.rashgild.promedator.data.dto.promed.EvnDto
+import ru.rashgild.promedator.data.dto.promed.EvnVisitsDto
+import ru.rashgild.promedator.data.dto.promed.EvnXmlDiaryDto
 import ru.rashgild.promedator.data.dto.promed.ResponseErrorDto
 import ru.rashgild.promedator.exception.BadRequestWebException
 
@@ -24,6 +27,10 @@ open class PromedClient(
         private const val WORK_PLACE_ENDPOINT = "api/WorkPlace"
         private const val DICTIONARY_LPU_SECTION = "api/Lpu/LpuSectionListByMO"
         private const val DICTIONARY_MED_STAFF = "api/MedStaffFactByMedPersonal"
+
+        private const val EVN_VISIT_ENDPOINT = "api/EvnVizitPL"
+        private const val EVN_DIARY_ENDPOINT = "api/XmlDocument"
+        private const val EVN_BASE_ENDPOINT = "api/EvnPLBase"
 
         fun Response.validate(): Response {
             if (this.statusCode == 200) {
@@ -127,30 +134,28 @@ open class PromedClient(
         )
     }
 
-    /*    public ClientResponse getWorkPlaceByPersonId(int personId) {
-        Map.Entry<String, String> header = service.getHeader();
-        return client
-                .resource(promedEndpoint)
-                .path(promedWorkPlace)
-                .queryParam("person_id", String.valueOf(personId))
-                .header(header.getKey(), header.getValue())
-                .accept(MediaType.APPLICATION_JSON_TYPE)
-                .get(ClientResponse.class);
-    }*/
-
-    fun sendMedicalCase() {
-        /*        return baseRequest(promedEvn)
-                .post(ClientResponse.class, evn);*/
+    fun sendEvn(evndto: EvnDto): Response {
+        return khttp.post(
+            url = url + EVN_BASE_ENDPOINT,
+            headers = authService.getHeader(),
+            data = objectMapper.writeValueAsString(evndto)
+        )
     }
 
-    fun sendMedicalVisit() {
-        /*        return baseRequest(promedVisit)
-                .post(ClientResponse.class, evnVisit);*/
+    fun sendEvnVisit(evnVisitsDto: EvnVisitsDto): Response {
+        return khttp.post(
+            url = url + EVN_VISIT_ENDPOINT,
+            headers = authService.getHeader(),
+            data = objectMapper.writeValueAsString(evnVisitsDto)
+        )
     }
 
-    fun sendDiary() {
-        /*        return baseRequest(promedDiary)
-                .post(ClientResponse.class, evnXmlDiary);*/
+    fun sendDiary(evnXmlDiaryDto: EvnXmlDiaryDto): Response {
+        return khttp.post(
+            url = url + EVN_DIARY_ENDPOINT,
+            headers = authService.getHeader(),
+            data = objectMapper.writeValueAsString(evnXmlDiaryDto)
+        )
     }
 
     fun getLpuDictionarySection(): Response {

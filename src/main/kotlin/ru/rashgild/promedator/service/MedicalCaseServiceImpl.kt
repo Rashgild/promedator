@@ -7,9 +7,12 @@ import ru.rashgild.promedator.dao.BaseWebClient.Companion.mapToList
 import ru.rashgild.promedator.dao.BaseWebClient.Companion.validate
 import ru.rashgild.promedator.dao.MedsysClient
 import ru.rashgild.promedator.data.dto.medsys.MedicalCaseDto
-import ru.rashgild.promedator.data.dto.promed.EvnRequestDto
-import ru.rashgild.promedator.data.dto.promed.ResponseModelDto
+import ru.rashgild.promedator.data.dto.medsys.VisitDto
+import ru.rashgild.promedator.data.dto.promed.*
 import ru.rashgild.promedator.data.dto.promed.dictionary.MedStaffDictionaryDto
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 @Service
 class MedicalCaseServiceImpl(
@@ -31,27 +34,32 @@ class MedicalCaseServiceImpl(
     }
 
 
+    private fun validate(medCase: MedicalCaseDto, visit: VisitDto) {
+        if (medCase.resultClass == null) {
+            ResponseModelDto(
+                objId = visit.medsysId,
+                errorMessage = "resultClass is empty"
+            )
+        }
+
+        if (visit.diagCode.isNullOrEmpty()) {
+            ResponseModelDto(
+                objId = visit.medsysId,
+                errorMessage = "diagnosis  code is empty"
+            )
+        }
+
+        if (visit.diary.isEmpty()) {
+            ResponseModelDto(
+                objId = visit.medsysId,
+                errorMessage = "diary is empty"
+            )
+        }
+    }
+
     private fun medsysToEvnDto(medCase: MedicalCaseDto): EvnRequestDto? {
         medCase.visits?.forEach { visit ->
 
-            if (medCase.resultClass == null) {
-                ResponseModelDto(
-                    objId = visit.medsysId,
-                    errorMessage = "resultClass is empty"
-                )
-            }
-            if (visit.diagCode.isNullOrEmpty()) {
-                ResponseModelDto(
-                    objId = visit.medsysId,
-                    errorMessage = "diagnosis  code is empty"
-                )
-            }
-            if (visit.diary.isNullOrEmpty()) {
-                ResponseModelDto(
-                    objId = visit.medsysId,
-                    errorMessage = "diary is empty"
-                )
-            }
             val person = personService.getPersonByData(medCase.patient)
             if (person == null) {
                 ResponseModelDto(
@@ -81,8 +89,8 @@ class MedicalCaseServiceImpl(
                 ?.filter { it.endDate == null && lpuId == it.lpuId }
                 ?.toList()
 
-            var medstaffDictionary: List<MedStaffDictionaryDto>? = null
-            validWorkPlaces?.forEach{ it ->
+            var medStaffDictionary: List<MedStaffDictionaryDto>? = null
+            validWorkPlaces?.forEach { it ->
                 val lpuSection = dictionaryService.getDictionaryLpuSections()
                     .stream()
                     .filter { lpuSectionDictionary ->
@@ -94,25 +102,83 @@ class MedicalCaseServiceImpl(
 
 
                 if (lpuSection != null) {
-                    medstaffDictionary = dictionaryService.getDictionaryMedStaff(
+                    medStaffDictionary = dictionaryService.getDictionaryMedStaff(
                         lpuSection.lpuSectionId,
                         it.medWorkerId
                     )
                 }
-                if (medstaffDictionary != null) {
+                if (medStaffDictionary != null) {
                     //break
                 }
             }
 
-            if (medstaffDictionary.isNullOrEmpty()) {
+            if (medStaffDictionary.isNullOrEmpty()) {
                 ResponseModelDto(
                     objId = visit.medsysId,
                     errorMessage = "doctor has no workfunction"
                 )
             }
-
         }
         return null
+    }
+
+    private fun converting(
+        person: PersonDto,
+        medStaff: MedStaffDictionaryDto,
+        visit: VisitDto,
+        medCase: MedicalCaseDto
+    ) {
+
+        val visits: MutableList<EvnVisitsDto> = ArrayList()
+        var tapRequestDto: EvnRequestDto? = null
+        if (visit.firstVisit) {
+            tapRequestDto = EvnRequestDto(
+                evn = EvnDto(
+                    personId = person.personId,
+                    medStaffFactId = medStaff.medStaffId,
+                    lpuSectionId = medStaff.lpuSectionId,
+                    resultDeseaseTypeId = visit.diseaseTypeId,
+                    serviceTypeId = visit.serviceTypeId,
+                    visitTypeId = visit.visitTypeId,
+                    evnSetDt = visit.visitDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                    evnPlNumCard = medCase.numCard.toString(),
+                    diagLid = medCase.diagLid,
+                    diagId = medCase.diagLid,
+                    treatmentClassId = 1, //TODO to constants
+                    payTypeId = 61,
+                    medicalCareKindId = 87,
+                    resultClassId = medCase.resultClass,
+                    isFinish = "1",
+                ),
+                evnDiary = EvnXmlDiaryDto(
+                    evnXmlData = VisitDto.getDiary(visit)
+                )
+            )
+        } else {
+            val list = EvnVisitsDto(
+                visit = EvnVisitDto(
+                    medStaffFactId = medStaff.medStaffId,
+                    lpuSectionId = medStaff.lpuSectionId,
+                    serviceTypeId = visit.serviceTypeId,
+                    diagId = visit.diagId,
+                    treatmentClassId = 1,
+                    payTypeId = 61,
+                    medicalCareKindId = 87,
+                    evnSetDt = visit.visitDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                    visitTypeId = visit.visitTypeId,//(countVisits)),
+                    medsysId = visit.medsysId, // . setMedosId visit.getMedosId()
+                ),
+                diary = EvnXmlDiaryDto(
+                    evnXmlData = VisitDto.getDiary(visit)
+                )
+            )
+            visits.add(list)
+        }
+
+        if (visits.isNotEmpty()) {
+            tapRequestDto?.visits = visits
+        }
+
     }
 
 }

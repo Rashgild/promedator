@@ -36,7 +36,7 @@ data class EvnDto(
     @JsonProperty("ResultClass_id")
     private val resultClassId: Int? = null,
     @JsonProperty("Person_id")
-    private val personId: Int? = null,
+    private val personId: Long,
     @JsonIgnore
     private val medosId: Int? = null
 )

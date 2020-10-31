@@ -10,7 +10,7 @@ data class MedicalCaseDto (
     val patient: PatientDto,
 
     @JsonProperty("EvnPL_NumCard")
-    val numCard: Int? = null,
+    val numCard: Int,
 
     @JsonProperty("EvnPL_IsFinish")
     val isFinish: Int? = null,

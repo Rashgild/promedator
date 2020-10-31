@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class MedStaffDictionaryDto(
 
     @JsonProperty("MedStaffFact_id")
-    private var medStaffId: Long? = null,
+    var medStaffId: Long? = null,
 
     @JsonProperty("lpuSectionId")
-    private val lpuSectionId: Long? = null
+    val lpuSectionId: Long? = null
 )

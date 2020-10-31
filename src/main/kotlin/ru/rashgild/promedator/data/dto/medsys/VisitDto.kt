@@ -33,7 +33,7 @@ data class VisitDto(
     val lpuSectionId: Long? = null,
 
     @JsonProperty("diary")
-    val diary: String? = null,
+    val diary: String,
 
     @JsonProperty("MedicalCareKind_id")
     val medicalCareKindId: Int? = null,
@@ -48,14 +48,24 @@ data class VisitDto(
     @JsonDeserialize(using = LocalDateTimeDeserializer::class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty("Evn_setDT")
-    val visitDate: LocalDateTime? = null,
+    val visitDate: LocalDateTime,
 
     @JsonProperty("VizitType_id")
     val visitTypeId: Int? = null,
 
     @JsonProperty("firstVisit")
-    val firstVisit: Boolean? = null,
+    val firstVisit: Boolean,
 
     @JsonProperty("WorkStaffInfo")
     val workStaff: WorkStaffDto
-)
+) {
+    companion object {
+        fun getDiary(visitDto: VisitDto): String {
+            return "<data><autoname47>" + visitDto.diary
+                .replace("\\", "/")
+                .replace(">", "&gt;")
+                .replace("<", "&lt;") +
+                    "</autoname47></data>"
+        }
+    }
+}

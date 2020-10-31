@@ -37,5 +37,5 @@ data class EvnVisitDto(
     private val visitTypeId: Int? = null,
 
     @JsonIgnore
-    private val medsysId: Int? = null,
+    private val medsysId: Long
 )

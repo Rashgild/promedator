@@ -10,7 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
 import java.time.LocalDate
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class MedStaff(
+data class MedStaffDto(
     private var id: Int? = null,
 
     private val medStaffId: Int? = null,
