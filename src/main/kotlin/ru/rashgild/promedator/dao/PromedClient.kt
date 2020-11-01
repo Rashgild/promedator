@@ -168,7 +168,7 @@ open class PromedClient(
         )
     }
 
-    fun getDictionaryMedstaff(lpuSectionId: Long, medPersonalId: Long): Response {
+    fun getDictionaryMedStaff(lpuSectionId: Long, medPersonalId: Long): Response {
         return khttp.get(
             url = url + DICTIONARY_MED_STAFF,
             params = mapOf(

@@ -2,10 +2,7 @@ package ru.rashgild.promedator.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import ru.rashgild.promedator.dao.BaseWebClient.Companion.mapToList
-import ru.rashgild.promedator.dao.BaseWebClient.Companion.validate
-import ru.rashgild.promedator.dao.MedsysClient
-import ru.rashgild.promedator.data.dto.medsys.MedicalCaseDto
+import ru.rashgild.promedator.data.enity.MedCase
 
 @Service
 class AmbulatoryEpicrisisServiceImpl(
@@ -13,6 +10,13 @@ class AmbulatoryEpicrisisServiceImpl(
 ) : AmbulatoryEpicrisisService {
 
     override fun sync(date: String) {
-        val taps = medicalCaseService.getMedicalCase(date)
+        val listMedicalCaseDto = medicalCaseService.getMedicalCase(date)
+
+        val listMedCases: MutableList<MedCase> = ArrayList()
+        listMedicalCaseDto.forEach { medicalCaseDto ->
+            listMedCases.add(medicalCaseService.medCaseDtoToMedCase(medicalCaseDto))
+        }
+
+        val evnList = medicalCaseService.mapMedCaseToTapRequestDto(listMedCases)
     }
 }

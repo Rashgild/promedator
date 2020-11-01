@@ -11,38 +11,17 @@ import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class VisitDto(
-    @JsonProperty("MedStaffFact_id")
-    val medStaffId: Long? = null,
-
-    @JsonProperty("MedosId")
-    val medsysId: Long,
-
-    @JsonProperty("ServiceType_id")
-    val serviceTypeId: Int? = null,
-
-    @JsonProperty("DeseaseType_id")
-    val diseaseTypeId: Int? = null,
-
-    @JsonProperty("Diag_lid")
-    val diagId: Int? = null,
-
-    @JsonProperty("Diag_code")
-    val diagCode: String? = null,
-
-    @JsonProperty("LpuSection_id")
-    val lpuSectionId: Long? = null,
-
-    @JsonProperty("diary")
-    val diary: String,
-
-    @JsonProperty("MedicalCareKind_id")
-    val medicalCareKindId: Int? = null,
-
-    @JsonProperty("Mes_id")
-    val mesId: Long? = null,
-
-    @JsonProperty("PayType_id")
-    val payType: String? = null,
+    @JsonProperty("MedStaffFact_id") val medStaffId: Long? = null,
+    @JsonProperty("MedosId") val medsysId: Long,
+    @JsonProperty("ServiceType_id") val serviceTypeId: Long,
+    @JsonProperty("DeseaseType_id") val diseaseTypeId: Long,
+    @JsonProperty("Diag_lid") val diagId: Int? = null,
+    @JsonProperty("Diag_code") val diagCode: String? = null,
+    @JsonProperty("LpuSection_id") val lpuSectionId: Long? = null,
+    @JsonProperty("diary") val diary: String,
+    @JsonProperty("MedicalCareKind_id") val medicalCareKindId: Int? = null,
+    @JsonProperty("Mes_id") val mesId: Long? = null,
+    @JsonProperty("PayType_id") val payType: String? = null,
 
     @JsonSerialize(using = LocalDateTimeSerializer::class)
     @JsonDeserialize(using = LocalDateTimeDeserializer::class)
@@ -50,14 +29,9 @@ data class VisitDto(
     @JsonProperty("Evn_setDT")
     val visitDate: LocalDateTime,
 
-    @JsonProperty("VizitType_id")
-    val visitTypeId: Int? = null,
-
-    @JsonProperty("firstVisit")
-    val firstVisit: Boolean,
-
-    @JsonProperty("WorkStaffInfo")
-    val workStaff: WorkStaffDto
+    @JsonProperty("VizitType_id") val visitTypeId: Long,
+    @JsonProperty("firstVisit") val firstVisit: Boolean,
+    @JsonProperty("WorkStaffInfo") val workStaff: WorkStaffDto
 ) {
     companion object {
         fun getDiary(visitDto: VisitDto): String {

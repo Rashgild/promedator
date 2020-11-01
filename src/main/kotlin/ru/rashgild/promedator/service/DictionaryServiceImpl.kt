@@ -22,7 +22,7 @@ class DictionaryServiceImpl(
     }
 
     override fun getDictionaryMedStaff(lpuSectionId: Long, medPersonalId: Long): List<MedStaffDictionaryDto> {
-        return promedClient.getDictionaryMedstaff(lpuSectionId, medPersonalId)
+        return promedClient.getDictionaryMedStaff(lpuSectionId, medPersonalId)
             .validate()
             .mapToList(MedStaffDictionaryDto::class.java)
     }
