@@ -11,18 +11,10 @@ import java.time.LocalDate
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class PersonDto(
-
-    @JsonProperty("Person_id")
-    val personId: Long,
-
-    @JsonProperty("PersonSurName_SurName")
-    val surName: String? = null,
-
-    @JsonProperty("PersonFirName_FirName")
-    val firstName: String? = null,
-
-    @JsonProperty("PersonSecName_SecName")
-    val secName: String? = null,
+    @JsonProperty("Person_id") val personId: Long,
+    @JsonProperty("PersonSurName_SurName") val surName: String? = null,
+    @JsonProperty("PersonFirName_FirName") val firstName: String? = null,
+    @JsonProperty("PersonSecName_SecName") val secName: String? = null,
 
     @JsonProperty("PersonBirthDay_BirthDay")
     @JsonSerialize(using = LocalDateSerializer::class)
@@ -30,12 +22,7 @@ data class PersonDto(
     @JsonFormat(pattern = "yyyy-MM-dd")
     val birthday: LocalDate? = null,
 
-    @JsonProperty("Person_Sex_id")
-    val sexId: Long? = null,
-
-    @JsonProperty("PersonPhone_Phone")
-    val phone: String? = null,
-
-    @JsonProperty("PersonSnils_Snils")
-    val snils: String? = null
+    @JsonProperty("Person_Sex_id") val sexId: Long? = null,
+    @JsonProperty("PersonPhone_Phone") val phone: String? = null,
+    @JsonProperty("PersonSnils_Snils") val snils: String? = null
 )

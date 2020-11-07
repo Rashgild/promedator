@@ -4,10 +4,7 @@ import khttp.responses.Response
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import ru.rashgild.promedator.data.dto.medsys.PatientDto
-import ru.rashgild.promedator.data.dto.promed.EvnDto
-import ru.rashgild.promedator.data.dto.promed.EvnVisitsDto
-import ru.rashgild.promedator.data.dto.promed.EvnXmlDiaryDto
-import ru.rashgild.promedator.data.dto.promed.ResponseErrorDto
+import ru.rashgild.promedator.data.dto.promed.*
 import ru.rashgild.promedator.exception.BadRequestWebException
 
 @Service
@@ -24,7 +21,7 @@ open class PromedClient(
         private const val TIME_TABLE_ENDPOINT = "api/TimeTableGraf/TimeTableGrafById"
         private const val LOGIN_ENDPOINT = "api/user/login"
         private const val LOGOUT_ENDPOINT = "api/user/logout"
-        private const val WORK_PLACE_ENDPOINT = "api/WorkPlace"
+        private const val WORK_PLACE_ENDPOINT = "api/MedStaffFactById"
         private const val DICTIONARY_LPU_SECTION = "api/Lpu/LpuSectionListByMO"
         private const val DICTIONARY_MED_STAFF = "api/MedStaffFactByMedPersonal"
 
@@ -124,29 +121,29 @@ open class PromedClient(
         )
     }
 
-    fun getWorkPlaceByPerson(snils: String): Response {
+    fun getWorkPlaceByPerson(personId: String): Response {
         return khttp.get(
             url = url + WORK_PLACE_ENDPOINT,
             params = mapOf(
-                "PersonSnils_Snils" to snils
+                "person_id" to personId
             ),
             headers = authService.getHeader()
         )
     }
 
-    fun sendEvn(evndto: EvnDto): Response {
+    fun sendEvn(evnDto: EvnDto): Response {
         return khttp.post(
             url = url + EVN_BASE_ENDPOINT,
             headers = authService.getHeader(),
-            data = objectMapper.writeValueAsString(evndto)
+            data = objectMapper.writeValueAsString(evnDto)
         )
     }
 
-    fun sendEvnVisit(evnVisitsDto: EvnVisitsDto): Response {
+    fun sendEvnVisit(evnVisitDto: EvnVisitDto?): Response {
         return khttp.post(
             url = url + EVN_VISIT_ENDPOINT,
             headers = authService.getHeader(),
-            data = objectMapper.writeValueAsString(evnVisitsDto)
+            data = objectMapper.writeValueAsString(evnVisitDto)
         )
     }
 

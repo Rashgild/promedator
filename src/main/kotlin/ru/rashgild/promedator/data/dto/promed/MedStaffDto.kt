@@ -11,15 +11,12 @@ import java.time.LocalDate
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class MedStaffDto(
-    private var id: Int? = null,
 
+    private var id: Int? = null,
     private val medStaffId: Int? = null,
 
-    @JsonProperty("MedPersonal_id")
-    private val medPersonalId: Int? = null,
-
-    @JsonProperty("Staff_id")
-    private val staffId: Int? = null,
+    @JsonProperty("MedPersonal_id") private val medPersonalId: Int? = null,
+    @JsonProperty("Staff_id") private val staffId: Int? = null,
 
     @JsonProperty("BeginDate")
     @JsonSerialize(using = LocalDateSerializer::class)
@@ -33,9 +30,6 @@ data class MedStaffDto(
     @JsonFormat(pattern = "yyyy-MM-dd")
     private val endDate: LocalDate? = null,
 
-    @JsonProperty("LpuSection_id")
-    private val lpuSectionId: Int? = null,
-
-    @JsonProperty("Lpu_id")
-    private val lpuId: Int? = null,
+    @JsonProperty("LpuSection_id") private val lpuSectionId: Int? = null,
+    @JsonProperty("Lpu_id") private val lpuId: Int? = null
 )

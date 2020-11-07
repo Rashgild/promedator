@@ -7,8 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class DateTableDto(
-    @JsonProperty("TimeTableGraf_id")
-    val timeTableGrafId: Long,
-    @JsonProperty("Person_id")
-    val personId: Long
+    @JsonProperty("TimeTableGraf_id") val timeTableGrafId: Long,
+    @JsonProperty("Person_id") val personId: Long
 )

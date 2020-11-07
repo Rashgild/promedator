@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class TokenResponseDto(
-    @JsonProperty("sess_id")
-    val sessionId: String,
-    @JsonProperty("error_code")
-    var errorCode: String? = null,
+    @JsonProperty("sess_id") val sessionId: String,
+    @JsonProperty("error_code") var errorCode: String? = null,
 )

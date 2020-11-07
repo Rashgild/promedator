@@ -1,12 +1,14 @@
 package ru.rashgild.promedator.data.dto.medsys
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
+import ru.rashgild.promedator.data.dto.promed.dictionary.MedStaffDictionaryDto
 import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -31,7 +33,11 @@ data class VisitDto(
 
     @JsonProperty("VizitType_id") val visitTypeId: Long,
     @JsonProperty("firstVisit") val firstVisit: Boolean,
-    @JsonProperty("WorkStaffInfo") val workStaff: WorkStaffDto
+    @JsonProperty("WorkStaffInfo") val workStaff: WorkStaffDto,
+
+    @JsonProperty("medStaffDictionary")
+    @JsonIgnore
+    var medStaffDictionary: MedStaffDictionaryDto? = null
 ) {
     companion object {
         fun getDiary(visitDto: VisitDto): String {

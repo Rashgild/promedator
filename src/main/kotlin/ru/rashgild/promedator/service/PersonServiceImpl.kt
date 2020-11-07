@@ -1,6 +1,5 @@
 package ru.rashgild.promedator.service
 
-import khttp.responses.Response
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import ru.rashgild.promedator.dao.BaseWebClient.Companion.mapToList
@@ -32,7 +31,7 @@ class PersonServiceImpl(
             .orElse(null)
     }
 
-    override fun getPersonBySnil(snils: String): PersonDto? {
+    override fun getPersonBySnils(snils: String): PersonDto? {
         return promedClient.getPersonBySnils(snils)
             .validate()
             .mapToList(PersonDto::class.java)

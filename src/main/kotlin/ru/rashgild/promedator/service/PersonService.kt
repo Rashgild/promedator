@@ -8,5 +8,5 @@ interface PersonService {
 
     fun getPersonByData(patient: PatientDto): PersonDto?
 
-    fun getPersonBySnil(snils: String): PersonDto?
+    fun getPersonBySnils(snils: String): PersonDto?
 }

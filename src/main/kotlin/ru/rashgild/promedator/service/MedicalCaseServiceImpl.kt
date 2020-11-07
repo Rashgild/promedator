@@ -6,26 +6,30 @@ import org.springframework.stereotype.Service
 import ru.rashgild.promedator.dao.BaseWebClient.Companion.mapToList
 import ru.rashgild.promedator.dao.BaseWebClient.Companion.validate
 import ru.rashgild.promedator.dao.MedsysClient
+import ru.rashgild.promedator.dao.PromedClient
 import ru.rashgild.promedator.data.dto.medsys.MedicalCaseDto
 import ru.rashgild.promedator.data.dto.medsys.VisitDto
 import ru.rashgild.promedator.data.dto.promed.*
 import ru.rashgild.promedator.data.dto.promed.dictionary.MedStaffDictionaryDto
 import ru.rashgild.promedator.data.enity.MedCase
 import ru.rashgild.promedator.data.enity.Visit
+import ru.rashgild.promedator.mapping.VisitMapper
 import java.time.format.DateTimeFormatter
 
 @Service
 class MedicalCaseServiceImpl(
     @Autowired private val personService: PersonService,
     @Autowired private val medsysClient: MedsysClient,
+    @Autowired private val promedClient: PromedClient,
     @Autowired private val dictionaryService: DictionaryService,
-    @Autowired private val workPlaceService: WorkPlaceService
+    @Autowired private val workPlaceService: WorkPlaceService,
+    @Autowired private val visitMapper: VisitMapper
 ) : MedicalCaseService {
 
-    @Value("\${lpu.id}")
+    @Value("\${promed.lpu.id}")
     private val lpuId: Long = 0
 
-    @Value("\${lpu.polyclinic.unit}")
+    @Value("\${promed.lpu.polyclinic}")
     private val lpuPolyclinicUnit: Long = 82L
 
     override fun getMedicalCase(date: String): List<MedicalCaseDto> {
@@ -34,61 +38,23 @@ class MedicalCaseServiceImpl(
             .mapToList(MedicalCaseDto::class.java)
     }
 
+    override fun sendEvn(evn: EvnDto) {
+        promedClient.sendEvn(evn)
+    }
+
+    fun sendDiary(dairy: EvnXmlDiaryDto) {
+        promedClient.sendDiary(dairy)
+    }
+
+    fun sendVisit(visit: EvnVisitDto) {
+        promedClient.sendEvnVisit(visit)
+    }
+
     override fun medCaseDtoToMedCase(medCaseDto: MedicalCaseDto): MedCase {
         val listVisit: MutableList<Visit> = ArrayList()
+        initFields(medCaseDto)
         medCaseDto.visits?.forEach { visit ->
-
-            val person = personService.getPersonByData(medCaseDto.patient)
-            val workStaff = visit.workStaff
-            val doctor = personService.getPersonBySnil(workStaff.snils)
-            val workPlaces = doctor?.personId?.let { personId -> workPlaceService.getWorkPlaceByPersonId(personId) }
-            val validWorkPlaces = workPlaces
-                ?.filter { it.endDate == null && lpuId == it.lpuId }
-                ?.toList()
-
-            var medStaffDictionary: MedStaffDictionaryDto? = null
-
-            validWorkPlaces?.forEach { it ->
-                val lpuSection = dictionaryService.getDictionaryLpuSections()
-                    .stream()
-                    .filter { lpuSectionDictionaryDto ->
-                        lpuSectionDictionaryDto.lpuSectionId == it.lpuSectionId &&
-                                lpuPolyclinicUnit == lpuSectionDictionaryDto.lpuUnitId
-                    }
-                    .findFirst()
-                    .orElse(null)
-
-                if (lpuSection != null) {
-                    medStaffDictionary = dictionaryService.getDictionaryMedStaff(
-                        lpuSection.lpuSectionId,
-                        it.medWorkerId
-                    ).firstOrNull()
-                }
-            }
-
-            listVisit.add(
-                Visit(
-                    personId = person?.personId,
-                    medStaffId = medStaffDictionary?.medStaffId,
-                    lpuSectionId = medStaffDictionary?.lpuSectionId,
-                    resultDiseaseTypeId = visit.diseaseTypeId,
-                    serviceTypeId = visit.serviceTypeId,
-                    visitTypeId = setVisitType(medCaseDto.visits.size, visit.diagCode),
-                    visitDate = visit.visitDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                    numCard = medCaseDto.numCard,
-                    diagLid = medCaseDto.diagLid,
-                    diagId = medCaseDto.diagLid,
-                    treatmentClassId = 1,
-                    payTypeId = 61,
-                    medicalCareKindId = 87,
-                    resultClassId = medCaseDto.resultClass,
-                    isFinish = if (visit.firstVisit) true else null,
-                    firstVisit = visit.firstVisit,
-                    medsysId = visit.medsysId,
-                    dairy = VisitDto.getDiary(visit),
-                )
-            )
-
+            listVisit.add(visitMapper.mapToVisit(medCaseDto, visit))
         }
         return MedCase(listVisit)
     }
@@ -96,81 +62,63 @@ class MedicalCaseServiceImpl(
     override fun mapMedCaseToTapRequestDto(listMedCase: List<MedCase>): MutableList<EvnRequestDto?> {
         val evnRequestList: MutableList<EvnRequestDto?> = ArrayList()
         //TODO validate and filter
-        listMedCase.forEach { medCase ->
-            val visits: MutableList<EvnVisitsDto> = ArrayList()
-            var tapRequestDto: EvnRequestDto? = null
-            medCase.visit.stream().forEach {
-                if (it.firstVisit) {
-                    tapRequestDto = visitToEvn(it)
-                } else {
-                    visits.add(visitToEvnVisitDto(it))
+
+        listMedCase
+            .forEach { medCase ->
+                val visits: MutableList<EvnVisitsDto> = ArrayList()
+                var tapRequestDto: EvnRequestDto? = null
+                medCase.visit.stream().forEach {
+                    if (it.firstVisit) {
+                        tapRequestDto = visitMapper.mapToEvnDto(it)
+                    } else {
+                        visits.add(visitMapper.mapToVisitDto(it))
+                    }
                 }
+                if (visits.isNotEmpty()) {
+                    tapRequestDto?.visits = visits
+                }
+                evnRequestList.add(tapRequestDto)
             }
-            if (visits.isNotEmpty()) {
-                tapRequestDto?.visits = visits
-            }
-            evnRequestList.add(tapRequestDto)
-        }
         return evnRequestList
     }
 
-    private fun visitToEvn(visit: Visit): EvnRequestDto {
-        return EvnRequestDto(
-            evn = EvnDto(
-                personId = visit.personId,
-                medStaffFactId = visit.medStaffId,
-                lpuSectionId = visit.lpuSectionId,
-                resultDeseaseTypeId = visit.resultDiseaseTypeId,
-                serviceTypeId = visit.serviceTypeId,
-                visitTypeId = visit.visitTypeId,
-                evnSetDt = visit.visitDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                evnPlNumCard = visit.numCard.toString(),
-                diagLid = visit.diagLid,
-                diagId = visit.diagLid,
-                treatmentClassId = visit.treatmentClassId,
-                payTypeId = visit.payTypeId,
-                medicalCareKindId = visit.medicalCareKindId,
-                resultClassId = visit.resultClassId,
-                isFinish = visit.isFinish.toString(),
-            ),
-            evnDiary = EvnXmlDiaryDto(
-                evnXmlData = visit.dairy
-            )
-        )
+    private fun export(evnList: MutableList<EvnRequestDto>) {
+        evnList
+            .parallelStream()
+            .forEach {
+                promedClient.sendEvn(it.evn) //TODO return baseId from promed
+                promedClient.sendDiary(it.evnDiary)
+                it.visits?.forEach { visit ->
+                    promedClient.sendEvnVisit(visit.visit) //TOOD return visitId from promed;
+                    promedClient.sendDiary(visit.diary)
+                }
+            }
     }
 
-    private fun visitToEvnVisitDto(visit: Visit): EvnVisitsDto {
-        return EvnVisitsDto(
-            visit = EvnVisitDto(
-                medStaffFactId = visit.medStaffId,
-                lpuSectionId = visit.lpuSectionId,
-                serviceTypeId = visit.serviceTypeId,
-                diagId = visit.diagId,
-                treatmentClassId = visit.treatmentClassId,
-                payTypeId = visit.payTypeId,
-                medicalCareKindId = visit.medicalCareKindId,
-                evnSetDt = visit.visitDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                visitTypeId = visit.visitTypeId,
-                medsysId = visit.medsysId,
-            ),
-            diary = EvnXmlDiaryDto(
-                evnXmlData = visit.dairy
-            )
-        )
-    }
+    private fun getMedStaffDictionary(visit: VisitDto): MedStaffDictionaryDto? {
+        val doctor = personService.getPersonBySnils(visit.workStaff.snils)
+        val workPlacesList = doctor?.personId?.let { personId -> workPlaceService.getWorkPlaceByPersonId(personId) }
+        val validWorkPlace = workPlacesList?.firstOrNull { it.endDate == null && lpuId == it.lpuId }
 
-    private fun setVisitType(count: Int, diag: String?): Long {
-        return when {
-            diag?.contains("Z")!! -> {
-                106
-            }
-            count == 1 -> {
-                103
-            }
-            else -> {
-                102
-            }
+        return if (validWorkPlace != null) {
+            val lpuSection = dictionaryService.getDictionaryLpuSections()
+                .firstOrNull { lpuSectionDictionaryDto ->
+                    lpuSectionDictionaryDto.lpuSectionId == validWorkPlace.lpuSectionId &&
+                            lpuPolyclinicUnit == lpuSectionDictionaryDto.lpuUnitId
+                }
+            dictionaryService.getDictionaryMedStaff(
+                lpuSection!!.lpuSectionId,
+                validWorkPlace.medWorkerId
+            ).firstOrNull()
+
+        } else {
+            null
         }
+    }
+
+    private fun initFields(medCaseDto: MedicalCaseDto) {
+        medCaseDto.personDto = personService.getPersonByData(medCaseDto.patient)!!
+        medCaseDto.visits?.forEach { visit -> visit.medStaffDictionary = getMedStaffDictionary(visit)!! }
     }
 
     private fun validate(medCase: MedicalCaseDto, visit: VisitDto) {

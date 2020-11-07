@@ -12,8 +12,7 @@ import java.time.LocalDateTime
 @JsonIgnoreProperties(ignoreUnknown = true)
 class TimeTableDto(
 
-    @JsonProperty("MedStaffFact_id")
-    val medStaffFactId: Long? = null,
+    @JsonProperty("MedStaffFact_id") val medStaffFactId: Long? = null,
 
     @JsonProperty("TimeTableGraf_begTime")
     @JsonSerialize(using = LocalDateTimeSerializer::class)
